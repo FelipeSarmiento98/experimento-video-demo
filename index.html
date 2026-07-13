@@ -37,7 +37,7 @@
     font-family:var(--font-body);
     -webkit-font-smoothing:antialiased;
     line-height:1.5;
-    padding-top:40px; /* espacio para la cinta de experimento */
+    padding-top:40px; 
   }
   img,svg{display:block;}
   button{font-family:inherit;}
@@ -349,7 +349,7 @@
   .chapters button{
     all:unset; cursor:pointer;
     display:flex; justify-content:space-between; align-items:center;
-    padding:10px 8px; border-radius:9px; font-size:13.5px;
+    padding:10px 8px; border-radius:99px; font-size:13.5px;
     color:var(--ink-soft);
   }
   .chapters button:hover{ background:var(--surface); color:var(--ink); }
@@ -499,7 +499,6 @@
     *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
   }
 </style>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WT8YJZHT74"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -510,10 +509,6 @@
 </head>
 <body>
 
-  <!-- Definiciones SVG compartidas: ilustración vectorial propia del producto
-       (no es una fotografía real, para evitar cualquier problema de derechos
-       de autor sobre imágenes de terceros). Se reutiliza en la galería, las
-       miniaturas y el fotograma de vista previa del video. -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
@@ -566,7 +561,6 @@
   </header>
 
   <main>
-    <!-- ===== HERO ===== -->
     <section class="hero">
       <div class="wrap hero-grid">
         <div>
@@ -637,7 +631,6 @@
       </div>
     </section>
 
-    <!-- ===== VIDEO DEMOSTRATIVO INTELIGENTE ===== -->
     <section class="video-section" id="video-demo">
       <div class="wrap">
         <span class="eyebrow">Cómo se vería en la publicación</span>
@@ -710,7 +703,6 @@
       </div>
     </section>
 
-    <!-- ===== BENEFICIOS ===== -->
     <section id="beneficios">
       <div class="wrap">
         <span class="eyebrow">Por qué podría importar</span>
@@ -740,7 +732,6 @@
       </div>
     </section>
 
-    <!-- ===== CTA FINAL ===== -->
     <section>
       <div class="cta-final">
         <h2>¿Probarías esta experiencia en tus próximas compras?</h2>
@@ -757,7 +748,6 @@
     </div>
   </footer>
 
-  <!-- ===== Panel del experimento ===== -->
   <button class="lab-toggle" id="labToggle" aria-expanded="false" aria-controls="labPanel">
     <span class="dot"></span> Panel del experimento
   </button>
@@ -778,7 +768,6 @@
     <p class="lab-footnote">Estos contadores son locales a esta sesión, solo para revisar que el instrumento funciona. Para el experimento real, conecta Google Analytics 4 o Microsoft Clarity (visitas y clics) y usa el conteo de respuestas de Google Forms (formularios enviados).</p>
   </div>
 
-  <!-- ===== Modal ===== -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div id="modalFormView">
@@ -820,12 +809,8 @@
 (function(){
   "use strict";
 
-  /* ==========================================================
-     DATOS SIMULADOS DEL VIDEO
-     (video, transcripción e IA son 100% simulados para el
-     experimento — no hay backend ni modelo real conectado)
-  ========================================================== */
-  var TOTAL_SECONDS = 260; // 04:20
+  var TOTAL_SECONDS = 260; 
+  var GOOGLE_FORM_URL = null; // Cambia por tu URL si quieres redirigir externamente
 
   var chapters = [
     { label: "Introducción al producto",     time: 0   },
@@ -861,9 +846,6 @@
     return str.toLowerCase().trim();
   }
 
-  /* ==========================================================
-     REPRODUCTOR SIMULADO
-  ========================================================== */
   var progressFill = document.getElementById("progressFill");
   var progressMarker = document.getElementById("progressMarker");
   var currentTimeLabel = document.getElementById("currentTimeLabel");
@@ -919,9 +901,6 @@
     seekTo(Math.round(ratio * TOTAL_SECONDS));
   });
 
-  /* ==========================================================
-     BÚSQUEDA DENTRO DEL VIDEO (simulada)
-  ========================================================== */
   var searchForm = document.getElementById("searchForm");
   var searchInput = document.getElementById("searchInput");
   var searchResult = document.getElementById("searchResult");
@@ -951,34 +930,12 @@
     runSearch(searchInput.value);
   });
 
-  document.querySelectorAll(".chip").forEach(function(chip){
+  document.querySelectorAll(".chips .chip").forEach(function(chip){
     chip.addEventListener("click", function(){
       searchInput.value = chip.dataset.term;
       runSearch(chip.dataset.term);
     });
   });
-
-  /* ==========================================================
-     MÉTRICAS DEL EXPERIMENTO
-     -----------------------------------------------------------
-     Estos contadores viven solo en memoria del navegador y se
-     reinician al recargar la página. Sirven para comprobar que
-     el instrumento está bien cableado antes de publicarlo.
-
-     Para el experimento real (según el plan de medición):
-       1. Publicar esta página en GitHub Pages / Netlify / Vercel.
-       2. Agregar Google Analytics 4 o Microsoft Clarity para
-          contar visitas reales:
-
-          <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
-          <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-XXXXXXX');
-          </script>
-
-
 
   var state = { visits: 0, clicks: 0, submits: 0 };
 
@@ -988,7 +945,7 @@
   var elCTR = document.getElementById("metricCTR");
   var elConv = document.getElementById("metricConv");
 
-  function pct(part, total){
+  function pctCalculate(part, total){
     if (total === 0) return "—";
     return ((part / total) * 100).toFixed(1) + "%";
   }
@@ -997,16 +954,13 @@
     elVisits.textContent = state.visits;
     elClicks.textContent = state.clicks;
     elSubmits.textContent = state.submits;
-    elCTR.textContent = pct(state.clicks, state.visits);
-    elConv.textContent = pct(state.submits, state.visits);
+    elCTR.textContent = pctCalculate(state.clicks, state.visits);
+    elConv.textContent = pctCalculate(state.submits, state.visits);
   }
 
-  state.visits = 1; // esta carga de página cuenta como una visita
+  state.visits = 1; 
   renderMetrics();
 
-  /* ==========================================================
-     PANEL DEL EXPERIMENTO (mostrar / ocultar)
-  ========================================================== */
   var labToggle = document.getElementById("labToggle");
   var labPanel = document.getElementById("labPanel");
 
@@ -1015,9 +969,6 @@
     labToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   });
 
-  /* ==========================================================
-     MODAL: "Quiero probar esta experiencia"
-  ========================================================== */
   var modalOverlay = document.getElementById("modalOverlay");
   var modalFormView = document.getElementById("modalFormView");
   var modalThanksView = document.getElementById("modalThanksView");
