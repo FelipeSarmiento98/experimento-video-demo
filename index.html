@@ -1011,6 +1011,12 @@
     e.preventDefault();
     state.submits++;
     renderMetrics();
+    
+    // 🔥 ESTA ES LA LÍNEA CRUCIAL QUE TE FALTA PARA MEDIR EN GOOGLE ANALYTICS:
+    gtag('event', 'envio_formulario', {
+      'conversion_status': 'exitoso'
+    });
+
     modalFormView.style.display = "none";
     modalThanksView.style.display = "block";
   });
