@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experimento de validación · Video Demostrativo Inteligente</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#F6F5F1;
+    --surface:#FFFFFF;
+    --ink:#14162B;
+    --ink-soft:#565973;
+    --ink-faint:#8B8DA3;
+    --accent-gold:#FFC531;
+    --accent-gold-dark:#E6A800;
+    --accent-blue:#1E4AE9;
+    --accent-blue-soft:#EAF0FF;
+    --accent-green:#12A150;
+    --accent-green-soft:#E7F8EE;
+    --border:#E7E5DD;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:8px;
+    --shadow:0 10px 30px -14px rgba(20,22,43,0.22);
+    --shadow-sm:0 4px 14px -8px rgba(20,22,43,0.18);
+    --font-body: ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    padding-top:40px; /* espacio para la cinta de experimento */
+  }
+  img,svg{display:block;}
+  button{font-family:inherit;}
+  a{color:inherit;}
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap;
+  }
+  :focus-visible{
+    outline:3px solid var(--accent-blue);
+    outline-offset:2px;
+    border-radius:4px;
+  }
+
+  /* ===== Cinta de experimento ===== */
+  .experiment-ribbon{
+    position:fixed; top:0; left:0; right:0; z-index:60;
+    background:var(--ink);
+    color:#fff;
+    font-size:12.5px;
+    letter-spacing:.02em;
+    padding:9px 16px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    text-align:center;
+  }
+  .experiment-ribbon strong{ color:var(--accent-gold); font-weight:700; }
+
+  /* ===== Layout genérico ===== */
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+  section{ padding:88px 0; }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent-blue);
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px; height:2px; background:var(--accent-blue);
+    display:inline-block;
+  }
+  h1,h2,h3{ margin:0; letter-spacing:-0.02em; }
+  .section-title{
+    font-size:clamp(26px,3.4vw,38px);
+    font-weight:800;
+    max-width:640px;
+  }
+  .section-lede{
+    color:var(--ink-soft);
+    font-size:16.5px;
+    max-width:560px;
+    margin-top:14px;
+  }
+
+  /* ===== Header ===== */
+  header{
+    position:sticky; top:40px; z-index:50;
+    background:rgba(246,245,241,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav{
+    max-width:1120px; margin:0 auto; padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    display:flex; align-items:center; gap:9px;
+    font-weight:800; font-size:19px; letter-spacing:-0.01em;
+  }
+  .logo-mark{
+    width:30px; height:30px; border-radius:9px;
+    background:var(--accent-gold);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink); font-weight:800; font-size:15px;
+  }
+  .nav-tag{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    color:var(--ink-faint);
+    border:1px solid var(--border);
+    border-radius:99px;
+    padding:5px 12px;
+  }
+
+  /* ===== Botones ===== */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:none; cursor:pointer;
+    border-radius:12px;
+    font-weight:700;
+    font-size:15.5px;
+    padding:14px 24px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn-primary{
+    background:var(--accent-gold);
+    color:var(--ink);
+    box-shadow:var(--shadow-sm);
+  }
+  .btn-primary:hover{ background:var(--accent-gold-dark); transform:translateY(-1px); }
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--border);
+  }
+  .btn-ghost:hover{ border-color:var(--ink); }
+  .btn-block{ width:100%; }
+  .btn[disabled]{ opacity:.55; cursor:not-allowed; transform:none; }
+
+  /* ===== Hero ===== */
+  .hero{ padding:72px 0 96px; }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(34px,4.6vw,54px);
+    font-weight:800;
+    line-height:1.06;
+  }
+  .hero-sub{
+    color:var(--ink-soft);
+    font-size:18px;
+    max-width:480px;
+    margin-top:18px;
+  }
+  .hero-actions{ margin-top:32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .hero-note{ font-size:13px; color:var(--ink-faint); }
+
+  /* ===== Mockup de publicación ===== */
+  .listing-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:20px;
+    position:relative;
+  }
+  .listing-badge{
+    position:absolute; top:-14px; right:20px;
+    background:var(--ink); color:#fff;
+    font-size:12px; font-weight:700;
+    padding:8px 14px; border-radius:99px;
+    display:flex; align-items:center; gap:6px;
+    box-shadow:var(--shadow-sm);
+    cursor:pointer; border:none;
+  }
+  .listing-badge span.dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--accent-gold);
+  }
+  .gallery{
+    display:grid; grid-template-columns:1fr; gap:8px;
+  }
+  .gallery-main{
+    aspect-ratio:4/3;
+    background:radial-gradient(120% 120% at 50% 18%, #FFFFFF 0%, #EDEBE3 55%, #E1DFD5 100%);
+    border-radius:var(--radius-md);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink-faint);
+    position:relative;
+    overflow:hidden;
+  }
+  .gallery-main::after{
+    content:"";
+    position:absolute; left:50%; bottom:9%;
+    width:58%; height:13%;
+    transform:translateX(-50%);
+    background:radial-gradient(closest-side, rgba(20,22,43,.20), transparent 72%);
+    border-radius:50%;
+  }
+  .gallery-main svg{ position:relative; z-index:1; }
+  .gallery-thumbs{ display:flex; gap:8px; margin-top:8px; }
+  .gallery-thumbs div{
+    flex:1; aspect-ratio:1; border-radius:9px;
+    background:#EFEEE8; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    padding:7px; overflow:hidden;
+  }
+  .gallery-thumbs div.active{ border-color:var(--accent-blue); }
+  .listing-body{ padding-top:16px; }
+  .listing-title{ font-size:18px; font-weight:700; }
+  .listing-price{ font-size:26px; font-weight:800; margin-top:6px; }
+  .listing-price small{ font-size:13px; color:var(--ink-faint); font-weight:500; margin-left:6px;}
+  .listing-rating{
+    display:flex; align-items:center; gap:6px;
+    margin-top:8px; color:var(--ink-soft); font-size:14px;
+  }
+  .stars{ display:flex; gap:2px; color:var(--accent-gold-dark); }
+  .listing-meta{
+    display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;
+  }
+  .pill{
+    font-size:12.5px; font-weight:600;
+    border-radius:99px; padding:6px 11px;
+    background:var(--accent-blue-soft); color:var(--accent-blue);
+  }
+  .pill-green{ background:var(--accent-green-soft); color:var(--accent-green); }
+
+  /* ===== Sección video ===== */
+  .video-section{ background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .video-grid{
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; margin-top:44px; align-items:start;
+  }
+  .player{
+    background:#101226; border-radius:var(--radius-lg);
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .player-screen{
+    aspect-ratio:16/9;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,197,49,.10), transparent 45%),
+      linear-gradient(160deg,#1A1D3A,#0C0D1E);
+  }
+  .player-scene{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:.68; filter:saturate(.7) brightness(.82) blur(.3px);
+    pointer-events:none;
+  }
+  .play-btn{
+    position:relative; z-index:1;
+    width:76px; height:76px; border-radius:50%;
+    background:rgba(255,255,255,.14);
+    border:1.5px solid rgba(255,255,255,.35);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:#fff;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .play-btn:hover{ background:rgba(255,255,255,.24); transform:scale(1.04); }
+  .player-caption{
+    position:absolute; bottom:16px; left:16px; right:16px;
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,.75);
+  }
+  .player-controls{ padding:14px 18px 18px; }
+  .progress-track{
+    height:5px; background:rgba(255,255,255,.16); border-radius:99px;
+    position:relative; cursor:pointer;
+  }
+  .progress-fill{
+    position:absolute; left:0; top:0; height:100%;
+    background:var(--accent-gold); border-radius:99px;
+    width:0%; transition:width .35s ease;
+  }
+  .progress-marker{
+    position:absolute; top:50%; width:13px; height:13px; border-radius:50%;
+    background:var(--accent-gold); border:2px solid #101226;
+    transform:translate(-50%,-50%);
+    left:0%; transition:left .35s ease;
+  }
+  .player-times{
+    display:flex; justify-content:space-between; margin-top:9px;
+    font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,.6);
+  }
+  #currentChapterLabel{ color:rgba(255,255,255,.85); }
+
+  .feature-list{
+    list-style:none; margin:22px 0 0; padding:0;
+    display:grid; grid-template-columns:1fr 1fr; gap:12px 18px;
+  }
+  .feature-list li{
+    display:flex; align-items:flex-start; gap:9px;
+    font-size:14.5px; color:var(--ink-soft);
+  }
+  .feature-list svg{ flex-shrink:0; margin-top:2px; color:var(--accent-green); }
+
+  .video-side{ display:flex; flex-direction:column; gap:22px; }
+  .panel{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:20px;
+  }
+  .panel h3{ font-size:15px; font-weight:700; }
+  .panel-hint{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+
+  .search-box{
+    margin-top:14px; display:flex; gap:8px;
+  }
+  .search-box input{
+    flex:1; border:1.5px solid var(--border); border-radius:10px;
+    padding:11px 13px; font-size:14.5px; background:var(--surface);
+  }
+  .search-box input:focus{ border-color:var(--accent-blue); outline:none; }
+  .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .chip{
+    font-size:12.5px; font-weight:600;
+    border:1px solid var(--border); background:var(--surface);
+    border-radius:99px; padding:6px 12px; cursor:pointer;
+    color:var(--ink-soft);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .chip:hover{ border-color:var(--accent-blue); color:var(--accent-blue); }
+  .search-result{
+    margin-top:14px; font-size:14px;
+    min-height:20px;
+  }
+  .search-result .ok{ color:var(--accent-green); font-weight:700; font-family:var(--font-mono); }
+  .search-result .no{ color:var(--ink-faint); }
+
+  .chapters{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:2px; }
+  .chapters button{
+    all:unset; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 8px; border-radius:9px; font-size:13.5px;
+    color:var(--ink-soft);
+  }
+  .chapters button:hover{ background:var(--surface); color:var(--ink); }
+  .chapters button time{ font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); }
+  .chapters button.active{ background:var(--accent-blue-soft); color:var(--accent-blue); }
+  .chapters button.active time{ color:var(--accent-blue); }
+
+  /* ===== Beneficios ===== */
+  .benefits-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:44px;
+  }
+  .benefit-card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-md); padding:22px;
+  }
+  .benefit-icon{
+    width:38px; height:38px; border-radius:10px;
+    background:var(--accent-blue-soft); color:var(--accent-blue);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px;
+  }
+  .benefit-card h3{ font-size:15.5px; font-weight:700; }
+  .benefit-card p{ font-size:13.8px; color:var(--ink-soft); margin-top:8px; line-height:1.5; }
+
+  /* ===== CTA final ===== */
+  .cta-final{
+    background:var(--ink); color:#fff; border-radius:var(--radius-lg);
+    padding:56px 44px; text-align:center;
+    margin:0 24px; max-width:1120px; margin-left:auto; margin-right:auto;
+  }
+  .cta-final h2{ font-size:clamp(24px,3.2vw,32px); font-weight:800; }
+  .cta-final p{ color:rgba(255,255,255,.68); max-width:480px; margin:14px auto 28px; font-size:15.5px; }
+  .cta-final .hero-note{ color:rgba(255,255,255,.5); margin-top:16px; }
+
+  /* ===== Panel del experimento ===== */
+  .lab-toggle{
+    position:fixed; bottom:22px; right:22px; z-index:55;
+    background:var(--ink); color:#fff;
+    border:none; border-radius:99px;
+    padding:13px 18px; font-size:13.5px; font-weight:700;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:var(--shadow); cursor:pointer;
+  }
+  .lab-toggle .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--accent-gold);
+  }
+  .lab-panel{
+    position:fixed; bottom:78px; right:22px; z-index:55;
+    width:min(340px, calc(100vw - 44px));
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:20px;
+    transform:translateY(12px) scale(.97);
+    opacity:0; pointer-events:none;
+    transition:transform .18s ease, opacity .18s ease;
+  }
+  .lab-panel.open{
+    transform:translateY(0) scale(1); opacity:1; pointer-events:auto;
+  }
+  .lab-panel h3{ font-size:14.5px; font-weight:700; }
+  .lab-hypothesis{
+    font-size:12px; color:var(--ink-soft);
+    background:var(--bg); border-radius:9px; padding:10px 12px; margin-top:10px;
+    line-height:1.5;
+  }
+  .lab-metrics{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px;
+  }
+  .lab-metric{
+    background:var(--bg); border-radius:9px; padding:10px 6px; text-align:center;
+  }
+  .lab-metric .num{ font-family:var(--font-mono); font-size:18px; font-weight:700; }
+  .lab-metric .lbl{ font-size:10px; color:var(--ink-faint); margin-top:2px; text-transform:uppercase; letter-spacing:.04em; }
+  .lab-formulas{ margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+  .lab-formula{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; color:var(--ink-soft);
+    border-top:1px dashed var(--border); padding-top:8px;
+  }
+  .lab-formula strong{ font-family:var(--font-mono); color:var(--ink); }
+  .lab-footnote{ font-size:10.5px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:80;
+    background:rgba(20,22,43,.5);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; pointer-events:none;
+    transition:opacity .18s ease;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal{
+    background:var(--surface); border-radius:var(--radius-lg);
+    width:100%; max-width:400px; padding:28px;
+    box-shadow:var(--shadow);
+    transform:translateY(10px) scale(.98);
+    transition:transform .18s ease;
+  }
+  .modal-overlay.open .modal{ transform:translateY(0) scale(1); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .modal-head h3{ font-size:19px; font-weight:800; max-width:280px; }
+  .modal-close{
+    background:none; border:none; cursor:pointer; color:var(--ink-faint);
+    padding:4px;
+  }
+  .modal p.desc{ font-size:13.5px; color:var(--ink-soft); margin-top:8px; }
+  .field{ margin-top:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; }
+  .field input{
+    width:100%; border:1.5px solid var(--border); border-radius:10px;
+    padding:11px 13px; font-size:14.5px;
+  }
+  .field input:focus{ border-color:var(--accent-blue); outline:none; }
+  .modal-actions{ margin-top:22px; }
+  .modal-legal{ font-size:11px; color:var(--ink-faint); margin-top:12px; text-align:center; }
+  .thanks{ text-align:center; padding:12px 0 4px; }
+  .thanks svg{ margin:0 auto 14px; color:var(--accent-green); }
+  .thanks h3{ font-size:18px; font-weight:800; }
+  .thanks p{ font-size:13.5px; color:var(--ink-soft); margin-top:8px; }
+
+  footer{
+    border-top:1px solid var(--border);
+    padding:36px 0 48px;
+    text-align:center;
+  }
+  footer p{ font-size:12px; color:var(--ink-faint); max-width:520px; margin:0 auto; line-height:1.6; }
+
+  @media (max-width: 860px){
+    .hero-grid{ grid-template-columns:1fr; gap:44px; }
+    .video-grid{ grid-template-columns:1fr; }
+    .benefits-grid{ grid-template-columns:1fr 1fr; }
+    .feature-list{ grid-template-columns:1fr; }
+    .cta-final{ padding:44px 26px; }
+  }
+  @media (max-width: 520px){
+    .benefits-grid{ grid-template-columns:1fr; }
+    .nav-tag{ display:none; }
+    section{ padding:64px 0; }
+    .lab-panel{ right:12px; left:12px; width:auto; }
+    .lab-toggle{ right:12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+  <!-- =====================================================
+       PASO A: Google Analytics 4 (mide visitas reales)
+       -----------------------------------------------------
+       1. Entra a analytics.google.com y crea una propiedad.
+       2. Copia tu "ID de medición" (tiene forma G-XXXXXXX).
+       3. Quita las marcas <!-- y --> de las 2 líneas de abajo.
+       4. Reemplaza las DOS apariciones de G-XXXXXXX por tu ID.
+  ===================================================== -->
+  <!--
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX');
+  </script>
+  -->
+</head>
+<body>
+
+  <!-- Definiciones SVG compartidas: ilustración vectorial propia del producto
+       (no es una fotografía real, para evitar cualquier problema de derechos
+       de autor sobre imágenes de terceros). Se reutiliza en la galería, las
+       miniaturas y el fotograma de vista previa del video. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#3358E8"/>
+        <stop offset="100%" stop-color="#14162B"/>
+      </linearGradient>
+      <pattern id="keys" width="16" height="10" patternUnits="userSpaceOnUse">
+        <rect x="1.5" y="1.5" width="13" height="7" rx="1.5" fill="#F3F2ED" stroke="#C9C7BB" stroke-width="0.6"/>
+      </pattern>
+      <symbol id="laptopArt" viewBox="0 0 320 220">
+        <rect x="60" y="14" width="200" height="122" rx="12" fill="#14162B"/>
+        <circle cx="160" cy="22" r="2" fill="#4A4E6B"/>
+        <rect x="74" y="28" width="172" height="96" rx="4" fill="url(#scr)"/>
+        <rect x="74" y="28" width="172" height="12" fill="#ffffff" opacity="0.06"/>
+        <circle cx="84" cy="34" r="2" fill="#FFC531"/>
+        <circle cx="92" cy="34" r="2" fill="#1E4AE9" opacity="0.85"/>
+        <circle cx="100" cy="34" r="2" fill="#12A150" opacity="0.85"/>
+        <rect x="92" y="48" width="112" height="62" rx="5" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+        <rect x="100" y="56" width="60" height="6" rx="2" fill="#ffffff" opacity="0.35"/>
+        <rect x="100" y="68" width="96" height="5" rx="2" fill="#ffffff" opacity="0.2"/>
+        <rect x="100" y="78" width="80" height="5" rx="2" fill="#ffffff" opacity="0.2"/>
+        <rect x="100" y="92" width="34" height="12" rx="3" fill="#FFC531" opacity="0.92"/>
+        <g opacity="0.55">
+          <circle cx="140" cy="118" r="3" fill="#ffffff"/>
+          <circle cx="152" cy="118" r="3" fill="#FFC531"/>
+          <circle cx="164" cy="118" r="3" fill="#ffffff"/>
+          <circle cx="176" cy="118" r="3" fill="#ffffff"/>
+          <circle cx="188" cy="118" r="3" fill="#ffffff"/>
+        </g>
+        <rect x="56" y="136" width="208" height="6" rx="3" fill="#0C0D1E"/>
+        <path d="M40 144 L280 144 L266 198 Q264 202 258 202 L62 202 Q56 202 54 198 Z" fill="#DAD8CD" stroke="#C6C4B7" stroke-width="1"/>
+        <rect x="70" y="152" width="180" height="26" rx="2" fill="url(#keys)"/>
+        <rect x="128" y="184" width="64" height="14" rx="4" fill="#EEECE4" stroke="#C6C4B7" stroke-width="1"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="experiment-ribbon">
+    🧪&nbsp;<strong>Experimento de validación</strong>&nbsp;— Maestría en Ingeniería de Software · Esta página es un prototipo de investigación, no una tienda real.
+  </div>
+
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <span class="logo-mark">CC</span>
+        CompraClara
+      </div>
+      <span class="nav-tag">Prototipo de investigación · v0.1</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Nueva funcionalidad en evaluación</span>
+          <h1>Compra con menos incertidumbre.</h1>
+          <p class="hero-sub">Conoce el producto en funcionamiento antes de comprar gracias a un Video Demostrativo Inteligente.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-open-modal>
+              Quiero probar esta experiencia
+            </button>
+            <a href="#video-demo" class="btn btn-ghost">Ver cómo funciona</a>
+          </div>
+          <p class="hero-note">No se procesa ninguna compra. Solo estás ayudando a validar una propuesta.</p>
+        </div>
+
+        <div class="listing-card">
+          <button class="listing-badge" data-open-modal>
+            <span class="dot"></span> Nuevo: Video Demostrativo Inteligente
+          </button>
+          <div class="gallery">
+            <div class="gallery-main">
+              <svg viewBox="0 0 320 220" width="84%" height="84%" aria-label="Ilustración del producto (imagen de referencia, no es una fotografía real)"><use href="#laptopArt"/></svg>
+            </div>
+            <div class="gallery-thumbs">
+              <div class="active" title="Vista frontal">
+                <svg viewBox="0 0 320 220" width="100%" height="100%" aria-hidden="true"><use href="#laptopArt"/></svg>
+              </div>
+              <div title="Puertos laterales">
+                <svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true">
+                  <rect x="7" y="11" width="26" height="18" rx="2.5" fill="none" stroke="#8B8DA3" stroke-width="1.6"/>
+                  <rect x="10.5" y="17" width="5" height="2.6" rx=".5" fill="#8B8DA3"/>
+                  <rect x="17.5" y="17" width="5" height="2.6" rx=".5" fill="#8B8DA3"/>
+                  <rect x="24.5" y="17" width="5" height="2.6" rx=".5" fill="#8B8DA3"/>
+                </svg>
+              </div>
+              <div title="Detalle del teclado">
+                <svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true"><rect x="4" y="12" width="32" height="16" rx="2.5" fill="url(#keys)"/></svg>
+              </div>
+              <div title="Detalle de pantalla">
+                <svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true">
+                  <rect x="4" y="7" width="32" height="26" rx="2.5" fill="url(#scr)"/>
+                  <rect x="9" y="13" width="16" height="3" rx="1" fill="#ffffff" opacity="0.4"/>
+                  <rect x="9" y="19" width="22" height="3" rx="1" fill="#ffffff" opacity="0.25"/>
+                  <rect x="9" y="25" width="12" height="3" rx="1" fill="#FFC531" opacity="0.85"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="listing-body">
+            <div class="listing-title">MacBook Pro M4 · 14" · 16GB / 512GB</div>
+            <div class="listing-price">$ 1.599 <small>USD · precio de referencia real de esta configuración (demo, no es una compra)</small></div>
+            <div class="listing-rating">
+              <span class="stars">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" opacity=".35"><path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6z"/></svg>
+              </span>
+              4.8 (128 opiniones · demo)
+            </div>
+            <div class="listing-meta">
+              <span class="pill">Envío disponible</span>
+              <span class="pill pill-green">Con video demostrativo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIDEO DEMOSTRATIVO INTELIGENTE ===== -->
+    <section class="video-section" id="video-demo">
+      <div class="wrap">
+        <span class="eyebrow">Cómo se vería en la publicación</span>
+        <h2 class="section-title">Video Demostrativo Inteligente</h2>
+        <p class="section-lede">Un video real del producto, con transcripción, capítulos y búsqueda por palabra clave. Todo lo que ves aquí es una simulación con fines de validación: no hay video ni IA real detrás.</p>
+
+        <div class="video-grid">
+          <div>
+            <div class="player">
+              <div class="player-screen">
+                <svg class="player-scene" viewBox="0 0 400 225" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+                  <use href="#laptopArt" x="112" y="52" width="176" height="121"/>
+                </svg>
+                <button class="play-btn" id="playBtn" aria-label="Reproducir video de demostración">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="player-caption">
+                  <span>Video de demostración (simulado)</span>
+                  <span id="currentChapterLabel">Introducción al producto</span>
+                </div>
+              </div>
+              <div class="player-controls">
+                <div class="progress-track" id="progressTrack">
+                  <div class="progress-fill" id="progressFill"></div>
+                  <div class="progress-marker" id="progressMarker"></div>
+                </div>
+                <div class="player-times">
+                  <span id="currentTimeLabel">00:00</span>
+                  <span>04:20</span>
+                </div>
+              </div>
+            </div>
+
+            <ul class="feature-list">
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Video real del producto</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Transcripción automática</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Capítulos inteligentes</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Buscar dentro del video</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> La IA responde preguntas frecuentes</li>
+            </ul>
+          </div>
+
+          <div class="video-side">
+            <div class="panel">
+              <h3>Buscar dentro del video</h3>
+              <p class="panel-hint">Escribe una palabra o toca un ejemplo.</p>
+              <form class="search-box" id="searchForm">
+                <label for="searchInput" class="visually-hidden">Buscar dentro del video</label>
+                <input type="text" id="searchInput" placeholder="Ej. garantía, batería, procesador…" autocomplete="off">
+                <button type="submit" class="btn btn-primary" style="padding:11px 16px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+              </form>
+              <div class="chips">
+                <button class="chip" data-term="garantía">Garantía</button>
+                <button class="chip" data-term="batería">Batería</button>
+                <button class="chip" data-term="procesador">Procesador</button>
+                <button class="chip" data-term="memoria ram">Memoria RAM</button>
+              </div>
+              <div class="search-result" id="searchResult" aria-live="polite"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Capítulos inteligentes</h3>
+              <p class="panel-hint">Navega directo a la parte que te interesa.</p>
+              <ul class="chapters" id="chaptersList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BENEFICIOS ===== -->
+    <section id="beneficios">
+      <div class="wrap">
+        <span class="eyebrow">Por qué podría importar</span>
+        <h2 class="section-title">Menos preguntas, más certeza antes de comprar</h2>
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg></div>
+            <h3>Reduce la incertidumbre</h3>
+            <p>Ver el producto en uso real, no solo en fotos, ayuda a decidir con más confianza.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div>
+            <h3>Comprende productos complejos</h3>
+            <p>Especificaciones técnicas explicadas en contexto, con ejemplos en video.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+            <h3>Encuentra respuestas rápido</h3>
+            <p>Busca una palabra y salta directo al minuto exacto del video.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <h3>No pierdas tiempo leyendo preguntas</h3>
+            <p>Evita revisar cientos de comentarios buscando la respuesta que ya existe.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA FINAL ===== -->
+    <section>
+      <div class="cta-final">
+        <h2>¿Probarías esta experiencia en tus próximas compras?</h2>
+        <p>Tu respuesta ayuda a decidir si esta propuesta pasa a la siguiente etapa de desarrollo.</p>
+        <button class="btn btn-primary" data-open-modal>Quiero probar esta experiencia</button>
+        <p class="hero-note">Formulario de 30 segundos. Sin compromiso, sin compra.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Prototipo académico elaborado para un experimento de Lean Startup — Maestría en Ingeniería de Software. No es un producto real ni está afiliado a Mercado Libre S.A. ni a ninguna otra marca mencionada. Los datos de esta página tienen fines de validación de una hipótesis de crecimiento.</p>
+    </div>
+  </footer>
+
+  <!-- ===== Panel del experimento ===== -->
+  <button class="lab-toggle" id="labToggle" aria-expanded="false" aria-controls="labPanel">
+    <span class="dot"></span> Panel del experimento
+  </button>
+  <div class="lab-panel" id="labPanel" role="region" aria-label="Panel de métricas del experimento">
+    <h3>Métricas del experimento</h3>
+    <p class="lab-hypothesis">
+      <strong>Hipótesis:</strong> si compradores habituales ven una publicación con Video Demostrativo Inteligente, al menos el 35% hará clic en "Quiero probar esta experiencia".
+    </p>
+    <div class="lab-metrics">
+      <div class="lab-metric"><div class="num" id="metricVisits">0</div><div class="lbl">Visitas</div></div>
+      <div class="lab-metric"><div class="num" id="metricClicks">0</div><div class="lbl">Clics CTA</div></div>
+      <div class="lab-metric"><div class="num" id="metricSubmits">0</div><div class="lbl">Formularios</div></div>
+    </div>
+    <div class="lab-formulas">
+      <div class="lab-formula"><span>CTR (clics / visitas)</span><strong id="metricCTR">—</strong></div>
+      <div class="lab-formula"><span>Conversión (formularios / visitas)</span><strong id="metricConv">—</strong></div>
+    </div>
+    <p class="lab-footnote">Estos contadores son locales a esta sesión, solo para revisar que el instrumento funciona. Para el experimento real, conecta Google Analytics 4 o Microsoft Clarity (visitas y clics) y usa el conteo de respuestas de Google Forms (formularios enviados).</p>
+  </div>
+
+  <!-- ===== Modal ===== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div id="modalFormView">
+        <div class="modal-head">
+          <h3 id="modalTitle">Quiero probar esta experiencia</h3>
+          <button class="modal-close" id="modalClose" aria-label="Cerrar formulario">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <p class="desc">Déjanos tus datos y te avisaremos si esta funcionalidad avanza a una prueba real.</p>
+        <form id="leadForm">
+          <div class="field">
+            <label for="nameInput">Nombre</label>
+            <input type="text" id="nameInput" name="nombre" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="emailInput">Correo electrónico</label>
+            <input type="email" id="emailInput" name="correo" required autocomplete="email">
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary btn-block">Quiero participar</button>
+          </div>
+        </form>
+        <p class="modal-legal">Tus datos se usan solo para este experimento de validación.</p>
+      </div>
+
+      <div id="modalThanksView" style="display:none;">
+        <div class="thanks">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+          <h3>Gracias por ayudarnos a validar esta propuesta.</h3>
+          <p>Tu respuesta quedó registrada en el panel del experimento.</p>
+          <button class="btn btn-ghost" style="margin-top:20px;" id="modalDone">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ==========================================================
+     DATOS SIMULADOS DEL VIDEO
+     (video, transcripción e IA son 100% simulados para el
+     experimento — no hay backend ni modelo real conectado)
+  ========================================================== */
+  var TOTAL_SECONDS = 260; // 04:20
+
+  var chapters = [
+    { label: "Introducción al producto",     time: 0   },
+    { label: "Procesador y rendimiento",     time: 45  },
+    { label: "Garantía y soporte técnico",   time: 74  },
+    { label: "Pantalla y diseño",            time: 95  },
+    { label: "Batería y autonomía",          time: 127 },
+    { label: "Puertos y conectividad",       time: 160 },
+    { label: "Preguntas frecuentes",         time: 195 }
+  ];
+
+  var searchIndex = [
+    { keyword: "garantía",     time: 74,  chapter: "Garantía y soporte técnico" },
+    { keyword: "soporte",      time: 74,  chapter: "Garantía y soporte técnico" },
+    { keyword: "batería",      time: 127, chapter: "Batería y autonomía" },
+    { keyword: "autonomía",    time: 127, chapter: "Batería y autonomía" },
+    { keyword: "procesador",   time: 45,  chapter: "Procesador y rendimiento" },
+    { keyword: "rendimiento",  time: 45,  chapter: "Procesador y rendimiento" },
+    { keyword: "memoria ram",  time: 42,  chapter: "Procesador y rendimiento" },
+    { keyword: "ram",          time: 42,  chapter: "Procesador y rendimiento" },
+    { keyword: "pantalla",     time: 95,  chapter: "Pantalla y diseño" },
+    { keyword: "puerto",       time: 160, chapter: "Puertos y conectividad" },
+    { keyword: "conectividad", time: 160, chapter: "Puertos y conectividad" }
+  ];
+
+  function formatTime(totalSeconds){
+    var m = Math.floor(totalSeconds / 60);
+    var s = Math.floor(totalSeconds % 60);
+    return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+  }
+
+  function normalize(str){
+    return str.toLowerCase().trim();
+  }
+
+  /* ==========================================================
+     REPRODUCTOR SIMULADO
+  ========================================================== */
+  var progressFill = document.getElementById("progressFill");
+  var progressMarker = document.getElementById("progressMarker");
+  var currentTimeLabel = document.getElementById("currentTimeLabel");
+  var currentChapterLabel = document.getElementById("currentChapterLabel");
+  var playBtn = document.getElementById("playBtn");
+  var chaptersList = document.getElementById("chaptersList");
+
+  function chapterAt(time){
+    var found = chapters[0];
+    for (var i = 0; i < chapters.length; i++){
+      if (chapters[i].time <= time) found = chapters[i];
+    }
+    return found;
+  }
+
+  function seekTo(seconds, chapterLabelOverride){
+    var pct = Math.max(0, Math.min(100, (seconds / TOTAL_SECONDS) * 100));
+    progressFill.style.width = pct + "%";
+    progressMarker.style.left = pct + "%";
+    currentTimeLabel.textContent = formatTime(seconds);
+    currentChapterLabel.textContent = chapterLabelOverride || chapterAt(seconds).label;
+
+    var buttons = chaptersList.querySelectorAll("button");
+    buttons.forEach(function(btn){
+      btn.classList.toggle("active", parseInt(btn.dataset.time, 10) === Math.round(seconds));
+    });
+  }
+
+  function renderChapters(){
+    chaptersList.innerHTML = "";
+    chapters.forEach(function(ch){
+      var li = document.createElement("li");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.time = ch.time;
+      btn.innerHTML = "<span>" + ch.label + "</span><time>" + formatTime(ch.time) + "</time>";
+      btn.addEventListener("click", function(){ seekTo(ch.time); });
+      li.appendChild(btn);
+      chaptersList.appendChild(li);
+    });
+  }
+  renderChapters();
+  seekTo(0);
+
+  playBtn.addEventListener("click", function(){
+    playBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+    playBtn.setAttribute("aria-label", "Video de demostración (simulado)");
+  });
+
+  document.getElementById("progressTrack").addEventListener("click", function(e){
+    var rect = this.getBoundingClientRect();
+    var ratio = (e.clientX - rect.left) / rect.width;
+    seekTo(Math.round(ratio * TOTAL_SECONDS));
+  });
+
+  /* ==========================================================
+     BÚSQUEDA DENTRO DEL VIDEO (simulada)
+  ========================================================== */
+  var searchForm = document.getElementById("searchForm");
+  var searchInput = document.getElementById("searchInput");
+  var searchResult = document.getElementById("searchResult");
+
+  function runSearch(term){
+    var q = normalize(term);
+    if (!q) return;
+
+    var match = null;
+    for (var i = 0; i < searchIndex.length; i++){
+      if (searchIndex[i].keyword.indexOf(q) !== -1 || q.indexOf(searchIndex[i].keyword) !== -1){
+        match = searchIndex[i];
+        break;
+      }
+    }
+
+    if (match){
+      searchResult.innerHTML = 'Resultado: <span class="ok">Ir al minuto ' + formatTime(match.time) + '</span> — ' + match.chapter;
+      seekTo(match.time, match.chapter);
+    } else {
+      searchResult.innerHTML = '<span class="no">No encontramos ese término en el video (demo). Prueba con "garantía", "batería" o "procesador".</span>';
+    }
+  }
+
+  searchForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    runSearch(searchInput.value);
+  });
+
+  document.querySelectorAll(".chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      searchInput.value = chip.dataset.term;
+      runSearch(chip.dataset.term);
+    });
+  });
+
+  /* ==========================================================
+     MÉTRICAS DEL EXPERIMENTO
+     -----------------------------------------------------------
+     Estos contadores viven solo en memoria del navegador y se
+     reinician al recargar la página. Sirven para comprobar que
+     el instrumento está bien cableado antes de publicarlo.
+
+     Para el experimento real (según el plan de medición):
+       1. Publicar esta página en GitHub Pages / Netlify / Vercel.
+       2. Agregar Google Analytics 4 o Microsoft Clarity para
+          contar visitas reales:
+
+          <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+          <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXX');
+          </script>
+
+       3. Cambiar el formulario de este modal por un enlace/embed
+          a un Google Form real, y usar el conteo de respuestas
+          de ese formulario como "formularios enviados".
+       4. Calcular manualmente:
+            CTR = clics en el CTA / visitas
+            Conversión = formularios enviados / visitas
+  ========================================================== */
+  /* =====================================================
+     PASO B: Google Form (guarda los formularios reales)
+     -----------------------------------------------------
+     1. Crea un formulario en forms.google.com con los campos
+        Nombre y Correo electrónico.
+     2. Haz clic en "Enviar" y copia el link corto.
+     3. Pégalo aquí abajo, entre las comillas.
+     Si lo dejas vacío (''), la página sigue mostrando el
+     formulario local de prueba, sin guardar nada real.
+  ===================================================== */
+  var GOOGLE_FORM_URL = "";
+
+  var state = { visits: 0, clicks: 0, submits: 0 };
+
+  var elVisits = document.getElementById("metricVisits");
+  var elClicks = document.getElementById("metricClicks");
+  var elSubmits = document.getElementById("metricSubmits");
+  var elCTR = document.getElementById("metricCTR");
+  var elConv = document.getElementById("metricConv");
+
+  function pct(part, total){
+    if (total === 0) return "—";
+    return ((part / total) * 100).toFixed(1) + "%";
+  }
+
+  function renderMetrics(){
+    elVisits.textContent = state.visits;
+    elClicks.textContent = state.clicks;
+    elSubmits.textContent = state.submits;
+    elCTR.textContent = pct(state.clicks, state.visits);
+    elConv.textContent = pct(state.submits, state.visits);
+  }
+
+  state.visits = 1; // esta carga de página cuenta como una visita
+  renderMetrics();
+
+  /* ==========================================================
+     PANEL DEL EXPERIMENTO (mostrar / ocultar)
+  ========================================================== */
+  var labToggle = document.getElementById("labToggle");
+  var labPanel = document.getElementById("labPanel");
+
+  labToggle.addEventListener("click", function(){
+    var isOpen = labPanel.classList.toggle("open");
+    labToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  /* ==========================================================
+     MODAL: "Quiero probar esta experiencia"
+  ========================================================== */
+  var modalOverlay = document.getElementById("modalOverlay");
+  var modalFormView = document.getElementById("modalFormView");
+  var modalThanksView = document.getElementById("modalThanksView");
+  var leadForm = document.getElementById("leadForm");
+
+  function openModal(){
+    state.clicks++;
+    renderMetrics();
+
+    if (GOOGLE_FORM_URL){
+      window.open(GOOGLE_FORM_URL, "_blank");
+      return;
+    }
+
+    modalFormView.style.display = "block";
+    modalThanksView.style.display = "none";
+    leadForm.reset();
+    modalOverlay.classList.add("open");
+    document.getElementById("nameInput").focus();
+  }
+
+  function closeModal(){
+    modalOverlay.classList.remove("open");
+  }
+
+  document.querySelectorAll("[data-open-modal]").forEach(function(btn){
+    btn.addEventListener("click", openModal);
+  });
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("modalDone").addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", function(e){
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+  });
+
+  leadForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    state.submits++;
+    renderMetrics();
+    modalFormView.style.display = "none";
+    modalThanksView.style.display = "block";
+  });
+
+})();
+</script>
+</body>
+</html>
